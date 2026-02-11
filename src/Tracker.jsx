@@ -240,7 +240,7 @@ export default function Tracker() {
     const hasVideo = d.type === "strength" && wInfo;
 
     return (
-      <div style={{fontFamily:"system-ui,sans-serif", maxWidth: hasVideo && activeVideo ? 1100 : 700, margin:"0 auto", padding:16, transition:"max-width 0.3s"}}>
+      <div style={{fontFamily:"system-ui,sans-serif", maxWidth: hasVideo && activeVideo ? "100%" : 700, margin:"0 auto", padding:16}}>
         <button onClick={() => { setSelDay(null); setExpandedEx(null); setActiveVideo(null); }} style={{padding:"6px 16px", background:"#4F46E5", color:"white", border:"none", borderRadius:8, cursor:"pointer", fontWeight:600, fontSize:13, marginBottom:12}}>
           ← Back to Week {selWeek}
         </button>
@@ -352,20 +352,19 @@ export default function Tracker() {
               </div>
             </div>
 
-            {/* Right column: sticky video player */}
+            {/* Right column: sticky video player (50% width) */}
             {activeVideo && (
-              <div style={{width:360, flexShrink:0, position:"sticky", top:16, alignSelf:"flex-start"}}>
+              <div style={{flex:1, minWidth:0, position:"sticky", top:16, alignSelf:"flex-start"}}>
                 <div style={{borderRadius:12, overflow:"hidden", border:"1px solid #E5E7EB", background:"#000"}}>
                   <iframe
                     key={activeVideo}
-                    width="360"
-                    height="203"
+                    width="100%"
+                    style={{display:"block", aspectRatio:"16/9"}}
                     src={`https://www.youtube-nocookie.com/embed/${activeVideo}?autoplay=1&loop=1&playlist=${activeVideo}&mute=1&rel=0&modestbranding=1`}
                     title="Exercise demo"
                     frameBorder="0"
                     allow="autoplay; encrypted-media"
                     allowFullScreen
-                    style={{display:"block"}}
                   />
                   <div style={{padding:"10px 12px", background:"#1F2937"}}>
                     <div style={{fontSize:12, color:"#9CA3AF", marginBottom:4}}>Now playing</div>
