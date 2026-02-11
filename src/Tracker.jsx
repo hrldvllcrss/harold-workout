@@ -5,27 +5,27 @@ const WORKOUTS = {
     name: "Chest & Arms",
     color: "#DC2626", bg: "#FEF2F2", border: "#FECACA",
     exercises: [
-      { name: "Dumbbell Bench Press", sets: 3, reps: "10", type: "compound",
+      { name: "Dumbbell Bench Press", sets: 3, reps: "10", type: "compound", videoId: "t1iaVBMItPo",
         howTo: "Lie flat on bench. Hold dumbbells at chest level, palms facing forward. Press straight up until arms are fully extended. Lower slowly (3 seconds) until elbows are level with the bench. Squeeze your chest at the top.",
         tips: "Keep feet flat on floor. Don't arch your lower back excessively. If wrists hurt, angle dumbbells slightly inward.",
         muscles: "Chest, Front Shoulders, Triceps" },
-      { name: "Incline Dumbbell Press", sets: 3, reps: "10", type: "compound",
+      { name: "Incline Dumbbell Press", sets: 3, reps: "10", type: "compound", videoId: "VDU5bzE2qOE",
         howTo: "Set bench to 30\u00b0 angle. Sit back, dumbbells at upper chest level. Press up at a slight angle following the bench line. Lower slowly to upper chest.",
         tips: "Go lighter than flat press \u2014 this is harder. Don't flare elbows out too wide. Feel it in your upper chest.",
         muscles: "Upper Chest, Front Shoulders, Triceps" },
-      { name: "Dumbbell Fly", sets: 3, reps: "10", type: "isolation",
+      { name: "Dumbbell Fly", sets: 3, reps: "10", type: "isolation", videoId: "Nhvz9EzdJ4U",
         howTo: "Lie flat on bench. Arms extended above chest with a slight bend in elbows (like hugging a tree). Open arms wide, lowering dumbbells to the sides until you feel a chest stretch. Squeeze chest to bring dumbbells back together.",
         tips: "Go LIGHT \u2014 this is a stretch movement, not a power move. Keep slight bend in elbows throughout. Don't go too deep if shoulders hurt.",
         muscles: "Chest (stretch focus)" },
-      { name: "Dumbbell Curl", sets: 3, reps: "10", type: "isolation",
+      { name: "Dumbbell Curl", sets: 3, reps: "10", type: "isolation", videoId: "XE_pHwbst04",
         howTo: "Stand or sit on bench. Hold dumbbells at sides, palms facing forward. Curl both dumbbells up toward shoulders. Lower slowly (3 seconds down). Keep elbows pinned to your sides.",
         tips: "Don't swing your body. If you have to swing, the weight is too heavy. Squeeze biceps hard at the top.",
         muscles: "Biceps" },
-      { name: "Overhead Tricep Extension", sets: 3, reps: "10", type: "isolation",
+      { name: "Overhead Tricep Extension", sets: 3, reps: "10", type: "isolation", videoId: "9wxRhONFsRA",
         howTo: "Sit on bench upright. Hold ONE dumbbell with both hands behind your head, elbows pointing up. Extend arms straight up. Lower slowly behind head until you feel a stretch in the back of your arms.",
         tips: "Keep elbows close to your head \u2014 don't let them flare. Use one dumbbell held with both hands. Go lighter than you think.",
         muscles: "Triceps" },
-      { name: "Plank", sets: 3, reps: "30s", type: "core",
+      { name: "Plank", sets: 3, reps: "30s", type: "core", videoId: "iDSHokfXqyA",
         howTo: "Weeks 1-4: KNEE PLANK \u2014 Forearms on ground, knees on ground, body straight from head to knees. Hold position. Weeks 5+: FULL PLANK \u2014 Same but on toes. Keep core tight, don't let hips sag or pike up.",
         tips: "Breathe normally \u2014 don't hold your breath. Squeeze your glutes. If your back hurts, go back to knee version. Build up time gradually (30s \u2192 45s \u2192 60s).",
         muscles: "Core, Shoulders, Lower Back" },
@@ -177,6 +177,7 @@ export default function Tracker() {
   const [selWeek, setSelWeek] = useState(1);
   const [selDay, setSelDay] = useState(null);
   const [expandedEx, setExpandedEx] = useState(null);
+  const [activeVideo, setActiveVideo] = useState(null);
   const [bodyWeights, setBodyWeights] = useState(() => loadBW() || Array(12).fill(""));
 
   // Auto-save to localStorage whenever data or bodyWeights change
@@ -236,9 +237,11 @@ export default function Tracker() {
     const wInfo = d.workoutType ? WORKOUTS[d.workoutType] : null;
     const allExDone = d.exercises ? d.exercises.every(e => e.done) : true;
 
+    const hasVideo = d.type === "strength" && wInfo;
+
     return (
-      <div style={{fontFamily:"system-ui,sans-serif", maxWidth:700, margin:"0 auto", padding:16}}>
-        <button onClick={() => { setSelDay(null); setExpandedEx(null); }} style={{padding:"6px 16px", background:"#4F46E5", color:"white", border:"none", borderRadius:8, cursor:"pointer", fontWeight:600, fontSize:13, marginBottom:12}}>
+      <div style={{fontFamily:"system-ui,sans-serif", maxWidth: hasVideo && activeVideo ? 1100 : 700, margin:"0 auto", padding:16, transition:"max-width 0.3s"}}>
+        <button onClick={() => { setSelDay(null); setExpandedEx(null); setActiveVideo(null); }} style={{padding:"6px 16px", background:"#4F46E5", color:"white", border:"none", borderRadius:8, cursor:"pointer", fontWeight:600, fontSize:13, marginBottom:12}}>
           ← Back to Week {selWeek}
         </button>
 
@@ -263,82 +266,121 @@ export default function Tracker() {
           <strong>{phase.name}</strong> — {phase.tip}
         </div>
 
-        {/* --- STRENGTH DAY --- */}
+        {/* --- STRENGTH DAY (two-column with video) --- */}
         {d.type === "strength" && wInfo && (
-          <>
-            <div style={{padding:"10px 14px", borderRadius:8, marginBottom:14, background:wInfo.bg, border:`1px solid ${wInfo.border}`}}>
-              <span style={{fontWeight:700, color:wInfo.color, fontSize:17}}>Workout {d.workoutType}: {wInfo.name}</span>
-              <div style={{fontSize:12, color:"#6B7280", marginTop:2}}>
-                {d.exercises.filter(e => e.done).length} / {d.exercises.length} exercises done
+          <div style={{display:"flex", gap:16, alignItems:"flex-start"}}>
+            {/* Left column: exercises */}
+            <div style={{flex:1, minWidth:0}}>
+              <div style={{padding:"10px 14px", borderRadius:8, marginBottom:14, background:wInfo.bg, border:`1px solid ${wInfo.border}`}}>
+                <span style={{fontWeight:700, color:wInfo.color, fontSize:17}}>Workout {d.workoutType}: {wInfo.name}</span>
+                <div style={{fontSize:12, color:"#6B7280", marginTop:2}}>
+                  {d.exercises.filter(e => e.done).length} / {d.exercises.length} exercises done
+                </div>
+              </div>
+
+              <div style={{display:"grid", gap:12}}>
+                {d.exercises.map((ex, ei) => {
+                  const exInfo = wInfo.exercises[ei];
+                  const isOpen = expandedEx === ei;
+                  const isPlaying = activeVideo === exInfo.videoId;
+                  return (
+                    <div key={ei} style={{border: ex.done ? "2px solid #86EFAC" : isPlaying ? "2px solid #4F46E5" : "1px solid #E5E7EB", borderRadius:12, overflow:"hidden", background: ex.done ? "#F0FDF4" : "white"}}>
+                      {/* Exercise Header */}
+                      <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 14px", background: ex.done ? "#DCFCE7" : "#F9FAFB", borderBottom:"1px solid #E5E7EB"}}>
+                        <div style={{flex:1}}>
+                          <div style={{display:"flex", alignItems:"center", gap:8, flexWrap:"wrap"}}>
+                            <span style={{fontWeight:700, fontSize:15}}>{ei+1}. {ex.name}</span>
+                            <span style={{fontSize:11, padding:"2px 8px", borderRadius:4,
+                              background: exInfo.type==="compound"?"#DBEAFE":exInfo.type==="isolation"?"#FEF3C7":"#E0E7FF",
+                              color: exInfo.type==="compound"?"#1E40AF":exInfo.type==="isolation"?"#92400E":"#3730A3",
+                              fontWeight:600}}>{exInfo.type}</span>
+                            <span style={{fontSize:11, color:"#9CA3AF"}}>Target: {exInfo.sets} × {exInfo.reps}</span>
+                          </div>
+                          <div style={{fontSize:11, color:"#6B7280", marginTop:2}}>🎯 {exInfo.muscles}</div>
+                        </div>
+                        <div style={{display:"flex", gap:6}}>
+                          {exInfo.videoId && (
+                            <button onClick={() => setActiveVideo(isPlaying ? null : exInfo.videoId)} style={{
+                              padding:"4px 10px", border:"1px solid #D1D5DB", borderRadius:6, cursor:"pointer",
+                              background: isPlaying ? "#DC2626" : "white", color: isPlaying ? "white" : "#DC2626", fontWeight:600, fontSize:11
+                            }}>{isPlaying ? "⏹ Stop" : "▶ Video"}</button>
+                          )}
+                          <button onClick={() => setExpandedEx(isOpen ? null : ei)} style={{
+                            padding:"4px 10px", border:"1px solid #D1D5DB", borderRadius:6, cursor:"pointer",
+                            background: isOpen ? "#4F46E5" : "white", color: isOpen ? "white" : "#4F46E5", fontWeight:600, fontSize:11
+                          }}>{isOpen ? "Hide Guide ▲" : "How To ▼"}</button>
+                          <button onClick={() => toggleExDone(selDay, ei)} style={{
+                            padding:"4px 14px", border:"none", borderRadius:6, cursor:"pointer",
+                            background: ex.done ? "#16A34A" : "#E5E7EB", color: ex.done ? "white" : "#374151", fontWeight:600, fontSize:12
+                          }}>{ex.done ? "Done ✓" : "Done"}</button>
+                        </div>
+                      </div>
+
+                      {/* How To Guide (expandable) */}
+                      {isOpen && (
+                        <div style={{padding:"12px 14px", background:"#FFFBEB", borderBottom:"1px solid #FDE68A"}}>
+                          <div style={{marginBottom:8}}>
+                            <div style={{fontSize:12, fontWeight:700, color:"#92400E", marginBottom:4}}>📖 HOW TO DO IT:</div>
+                            <div style={{fontSize:13, color:"#374151", lineHeight:1.5}}>{exInfo.howTo}</div>
+                          </div>
+                          <div style={{padding:"8px 10px", background:"#FEF3C7", borderRadius:6}}>
+                            <div style={{fontSize:12, fontWeight:700, color:"#92400E", marginBottom:2}}>💡 TIPS:</div>
+                            <div style={{fontSize:12, color:"#78350F", lineHeight:1.4}}>{exInfo.tips}</div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Logging */}
+                      <div style={{padding:"10px 14px"}}>
+                        <div style={{display:"grid", gap:5}}>
+                          {ex.logged.map((log, li) => (
+                            <div key={li} style={{display:"flex", alignItems:"center", gap:8}}>
+                              <span style={{fontSize:12, fontWeight:600, color:"#9CA3AF", width:42}}>Set {li+1}</span>
+                              <input type="number" placeholder="kg" value={log.weight} onChange={e => updateLog(selDay, ei, li, "weight", e.target.value)}
+                                style={{width:66, padding:"7px 8px", border:"1px solid #D1D5DB", borderRadius:6, fontSize:13, textAlign:"center"}} />
+                              <span style={{fontSize:12, color:"#9CA3AF"}}>×</span>
+                              <input type="text" placeholder="reps" value={log.reps} onChange={e => updateLog(selDay, ei, li, "reps", e.target.value)}
+                                style={{width:58, padding:"7px 8px", border:"1px solid #D1D5DB", borderRadius:6, fontSize:13, textAlign:"center"}} />
+                              {log.weight && log.reps && <span style={{fontSize:11, color:"#16A34A"}}>✓</span>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            <div style={{display:"grid", gap:12}}>
-              {d.exercises.map((ex, ei) => {
-                const exInfo = wInfo.exercises[ei];
-                const isOpen = expandedEx === ei;
-                return (
-                  <div key={ei} style={{border: ex.done ? "2px solid #86EFAC" : "1px solid #E5E7EB", borderRadius:12, overflow:"hidden", background: ex.done ? "#F0FDF4" : "white"}}>
-                    {/* Exercise Header */}
-                    <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 14px", background: ex.done ? "#DCFCE7" : "#F9FAFB", borderBottom:"1px solid #E5E7EB"}}>
-                      <div style={{flex:1}}>
-                        <div style={{display:"flex", alignItems:"center", gap:8, flexWrap:"wrap"}}>
-                          <span style={{fontWeight:700, fontSize:15}}>{ei+1}. {ex.name}</span>
-                          <span style={{fontSize:11, padding:"2px 8px", borderRadius:4,
-                            background: exInfo.type==="compound"?"#DBEAFE":exInfo.type==="isolation"?"#FEF3C7":"#E0E7FF",
-                            color: exInfo.type==="compound"?"#1E40AF":exInfo.type==="isolation"?"#92400E":"#3730A3",
-                            fontWeight:600}}>{exInfo.type}</span>
-                          <span style={{fontSize:11, color:"#9CA3AF"}}>Target: {exInfo.sets} × {exInfo.reps}</span>
-                        </div>
-                        <div style={{fontSize:11, color:"#6B7280", marginTop:2}}>🎯 {exInfo.muscles}</div>
-                      </div>
-                      <div style={{display:"flex", gap:6}}>
-                        <button onClick={() => setExpandedEx(isOpen ? null : ei)} style={{
-                          padding:"4px 10px", border:"1px solid #D1D5DB", borderRadius:6, cursor:"pointer",
-                          background: isOpen ? "#4F46E5" : "white", color: isOpen ? "white" : "#4F46E5", fontWeight:600, fontSize:11
-                        }}>{isOpen ? "Hide Guide ▲" : "How To ▼"}</button>
-                        <button onClick={() => toggleExDone(selDay, ei)} style={{
-                          padding:"4px 14px", border:"none", borderRadius:6, cursor:"pointer",
-                          background: ex.done ? "#16A34A" : "#E5E7EB", color: ex.done ? "white" : "#374151", fontWeight:600, fontSize:12
-                        }}>{ex.done ? "Done ✓" : "Done"}</button>
-                      </div>
+            {/* Right column: sticky video player */}
+            {activeVideo && (
+              <div style={{width:360, flexShrink:0, position:"sticky", top:16, alignSelf:"flex-start"}}>
+                <div style={{borderRadius:12, overflow:"hidden", border:"1px solid #E5E7EB", background:"#000"}}>
+                  <iframe
+                    key={activeVideo}
+                    width="360"
+                    height="203"
+                    src={`https://www.youtube-nocookie.com/embed/${activeVideo}?autoplay=1&loop=1&playlist=${activeVideo}&mute=1&rel=0&modestbranding=1`}
+                    title="Exercise demo"
+                    frameBorder="0"
+                    allow="autoplay; encrypted-media"
+                    allowFullScreen
+                    style={{display:"block"}}
+                  />
+                  <div style={{padding:"10px 12px", background:"#1F2937"}}>
+                    <div style={{fontSize:12, color:"#9CA3AF", marginBottom:4}}>Now playing</div>
+                    <div style={{fontSize:14, fontWeight:700, color:"white"}}>
+                      {wInfo.exercises.find(e => e.videoId === activeVideo)?.name}
                     </div>
-
-                    {/* How To Guide (expandable) */}
-                    {isOpen && (
-                      <div style={{padding:"12px 14px", background:"#FFFBEB", borderBottom:"1px solid #FDE68A"}}>
-                        <div style={{marginBottom:8}}>
-                          <div style={{fontSize:12, fontWeight:700, color:"#92400E", marginBottom:4}}>📖 HOW TO DO IT:</div>
-                          <div style={{fontSize:13, color:"#374151", lineHeight:1.5}}>{exInfo.howTo}</div>
-                        </div>
-                        <div style={{padding:"8px 10px", background:"#FEF3C7", borderRadius:6}}>
-                          <div style={{fontSize:12, fontWeight:700, color:"#92400E", marginBottom:2}}>💡 TIPS:</div>
-                          <div style={{fontSize:12, color:"#78350F", lineHeight:1.4}}>{exInfo.tips}</div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Logging */}
-                    <div style={{padding:"10px 14px"}}>
-                      <div style={{display:"grid", gap:5}}>
-                        {ex.logged.map((log, li) => (
-                          <div key={li} style={{display:"flex", alignItems:"center", gap:8}}>
-                            <span style={{fontSize:12, fontWeight:600, color:"#9CA3AF", width:42}}>Set {li+1}</span>
-                            <input type="number" placeholder="kg" value={log.weight} onChange={e => updateLog(selDay, ei, li, "weight", e.target.value)}
-                              style={{width:66, padding:"7px 8px", border:"1px solid #D1D5DB", borderRadius:6, fontSize:13, textAlign:"center"}} />
-                            <span style={{fontSize:12, color:"#9CA3AF"}}>×</span>
-                            <input type="text" placeholder="reps" value={log.reps} onChange={e => updateLog(selDay, ei, li, "reps", e.target.value)}
-                              style={{width:58, padding:"7px 8px", border:"1px solid #D1D5DB", borderRadius:6, fontSize:13, textAlign:"center"}} />
-                            {log.weight && log.reps && <span style={{fontSize:11, color:"#16A34A"}}>✓</span>}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    <button onClick={() => setActiveVideo(null)} style={{
+                      marginTop:8, width:"100%", padding:"6px 0", background:"#374151", color:"#D1D5DB",
+                      border:"1px solid #4B5563", borderRadius:6, cursor:"pointer", fontSize:12, fontWeight:600
+                    }}>Close Video</button>
                   </div>
-                );
-              })}
-            </div>
-          </>
+                </div>
+              </div>
+            )}
+          </div>
         )}
 
         {/* --- CARDIO DAY --- */}
