@@ -170,6 +170,8 @@ const loadBW = () => {
   } catch { return null; }
 };
 
+const lbsToKg = lbs => lbs ? (Number(lbs) * 0.453592).toFixed(1) : "";
+
 const fmtDate = d => `${MONTHS[d.getMonth()]} ${d.getDate()}`;
 
 export default function Tracker() {
@@ -218,15 +220,15 @@ export default function Tracker() {
   const totalWork = data.reduce((a,w) => a + w.days.filter(d => d.type !== "rest").length, 0);
 
   const exportCSV = () => {
-    let csv = "Week,Date,Day,Type,Workout,Exercise,Set,Weight(kg),Reps,Done,Notes\n";
+    let csv = "Week,Date,Day,Type,Workout,Exercise,Set,Weight(lbs),Weight(kg),Reps,Done,Notes\n";
     data.forEach(w => w.days.forEach(d => {
       const dt = `${d.date.getFullYear()}-${String(d.date.getMonth()+1).padStart(2,'0')}-${String(d.date.getDate()).padStart(2,'0')}`;
       if (d.exercises) d.exercises.forEach(ex => ex.logged.forEach((l,li) => {
-        csv += `${w.week},${dt},${d.dayName},Strength,${d.workoutType}: ${WORKOUTS[d.workoutType].name},${ex.name},${li+1},${l.weight},${l.reps},${d.done?"Y":"N"},"${d.notes}"\n`;
+        csv += `${w.week},${dt},${d.dayName},Strength,${d.workoutType}: ${WORKOUTS[d.workoutType].name},${ex.name},${li+1},${l.weight},${lbsToKg(l.weight)},${l.reps},${d.done?"Y":"N"},"${d.notes}"\n`;
       }));
-      else csv += `${w.week},${dt},${d.dayName},${d.type},,,,,${d.done?"Y":"N"},"${d.notes}"\n`;
+      else csv += `${w.week},${dt},${d.dayName},${d.type},,,,,,${d.done?"Y":"N"},"${d.notes}"\n`;
     }));
-    csv += "\nBody Weight\nWeek,kg\n"; bodyWeights.forEach((bw,i) => csv += `${i+1},${bw}\n`);
+    csv += "\nBody Weight\nWeek,lbs,kg\n"; bodyWeights.forEach((bw,i) => csv += `${i+1},${bw},${lbsToKg(bw)}\n`);
     const b = new Blob([csv],{type:"text/csv"}); const u = URL.createObjectURL(b);
     const a = document.createElement("a"); a.href=u; a.download="workout_tracker_feb_may_2026.csv"; a.click(); URL.revokeObjectURL(u);
   };
@@ -336,8 +338,9 @@ export default function Tracker() {
                           {ex.logged.map((log, li) => (
                             <div key={li} style={{display:"flex", alignItems:"center", gap:8}}>
                               <span style={{fontSize:12, fontWeight:600, color:"#9CA3AF", width:42}}>Set {li+1}</span>
-                              <input type="number" placeholder="kg" value={log.weight} onChange={e => updateLog(selDay, ei, li, "weight", e.target.value)}
+                              <input type="number" placeholder="lbs" value={log.weight} onChange={e => updateLog(selDay, ei, li, "weight", e.target.value)}
                                 style={{width:66, padding:"7px 8px", border:"1px solid #D1D5DB", borderRadius:6, fontSize:13, textAlign:"center"}} />
+                              {log.weight && <span style={{fontSize:11, color:"#6B7280", minWidth:40}}>{lbsToKg(log.weight)}kg</span>}
                               <span style={{fontSize:12, color:"#9CA3AF"}}>×</span>
                               <input type="text" placeholder="reps" value={log.reps} onChange={e => updateLog(selDay, ei, li, "reps", e.target.value)}
                                 style={{width:58, padding:"7px 8px", border:"1px solid #D1D5DB", borderRadius:6, fontSize:13, textAlign:"center"}} />
@@ -422,7 +425,7 @@ export default function Tracker() {
         {/* Progression reminder */}
         {d.type === "strength" && (
           <div style={{marginTop:10, padding:10, background:"#EEF2FF", borderRadius:8, border:"1px solid #C7D2FE", fontSize:12, color:"#3730A3"}}>
-            <strong>⬆️ Weight Progression:</strong> Hit all target reps on every set → increase weight next session. Compounds: +2.5kg per dumbbell. Isolation: +1kg. Can't jump? Do 10→12 reps first, then increase weight and drop back to 8-10 reps.
+            <strong>⬆️ Weight Progression:</strong> Hit all target reps on every set → increase weight next session. Compounds: +5lbs per dumbbell. Isolation: +2.5lbs. Can't jump? Do 10→12 reps first, then increase weight and drop back to 8-10 reps.
           </div>
         )}
       </div>
@@ -434,7 +437,7 @@ export default function Tracker() {
     <div style={{fontFamily:"system-ui,sans-serif", maxWidth:700, margin:"0 auto", padding:16}}>
       <div style={{marginBottom:6}}>
         <h1 style={{fontSize:20, fontWeight:700, margin:0}}>3-Month Workout Tracker</h1>
-        <div style={{fontSize:12, color:"#6B7280"}}>Feb 16 – May 10, 2026 | Start: 79kg | Protein: 120-130g/day</div>
+        <div style={{fontSize:12, color:"#6B7280"}}>Feb 16 – May 10, 2026 | Start: 174lbs (79kg) | Protein: 120-130g/day</div>
       </div>
 
       {/* Progress */}
@@ -483,12 +486,15 @@ export default function Tracker() {
       {/* Body weight */}
       <div style={{display:"flex", alignItems:"center", gap:8, marginBottom:12, padding:"8px 12px", background:"#F9FAFB", borderRadius:8, border:"1px solid #E5E7EB"}}>
         <span style={{fontSize:13, fontWeight:600}}>Wk {selWeek} Weight:</span>
-        <input type="number" placeholder="kg" value={bodyWeights[selWeek-1]}
+        <input type="number" placeholder="lbs" value={bodyWeights[selWeek-1]}
           onChange={e => { const n=[...bodyWeights]; n[selWeek-1]=e.target.value; setBodyWeights(n); }}
           style={{width:70, padding:"5px 8px", border:"1px solid #D1D5DB", borderRadius:6, fontSize:13, textAlign:"center"}} />
-        <span style={{fontSize:12, color:"#6B7280"}}>kg</span>
-        {bodyWeights[selWeek-1] && <span style={{fontSize:12, fontWeight:600, color:Number(bodyWeights[selWeek-1])<79?"#16A34A":"#6B7280"}}>
-          ({(Number(bodyWeights[selWeek-1])-79)>=0?"+":""}{(Number(bodyWeights[selWeek-1])-79).toFixed(1)}kg)
+        <span style={{fontSize:12, color:"#6B7280"}}>lbs</span>
+        {bodyWeights[selWeek-1] && <span style={{fontSize:12, fontWeight:600, color:"#6B7280"}}>
+          ({lbsToKg(bodyWeights[selWeek-1])}kg)
+        </span>}
+        {bodyWeights[selWeek-1] && <span style={{fontSize:12, fontWeight:600, color:Number(lbsToKg(bodyWeights[selWeek-1]))<79?"#16A34A":"#6B7280"}}>
+          {(Number(lbsToKg(bodyWeights[selWeek-1]))-79)>=0?"+":""}{(Number(lbsToKg(bodyWeights[selWeek-1]))-79).toFixed(1)}kg from start
         </span>}
       </div>
 
