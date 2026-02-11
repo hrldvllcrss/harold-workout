@@ -190,21 +190,27 @@ export default function Tracker() {
   const phase = PHASES.find(p => p.weeks.includes(selWeek));
   const cardio = CARDIO.find(c => c.weeks.includes(selWeek));
 
+  const cloneData = (prev) => {
+    const n = JSON.parse(JSON.stringify(prev));
+    n.forEach(w => w.days.forEach(d => { d.date = new Date(d.date); }));
+    return n;
+  };
+
   const toggleDayDone = (dayIdx) => {
-    setData(prev => { const n = JSON.parse(JSON.stringify(prev)); n[selWeek-1].days[dayIdx].done = !n[selWeek-1].days[dayIdx].done; return n; });
+    setData(prev => { const n = cloneData(prev); n[selWeek-1].days[dayIdx].done = !n[selWeek-1].days[dayIdx].done; return n; });
   };
   const toggleExDone = (dayIdx, exIdx) => {
-    setData(prev => { const n = JSON.parse(JSON.stringify(prev)); n[selWeek-1].days[dayIdx].exercises[exIdx].done = !n[selWeek-1].days[dayIdx].exercises[exIdx].done; return n; });
+    setData(prev => { const n = cloneData(prev); n[selWeek-1].days[dayIdx].exercises[exIdx].done = !n[selWeek-1].days[dayIdx].exercises[exIdx].done; return n; });
   };
   const updateLog = (dayIdx, exIdx, setIdx, field, val) => {
-    setData(prev => { const n = JSON.parse(JSON.stringify(prev)); n[selWeek-1].days[dayIdx].exercises[exIdx].logged[setIdx][field] = val; return n; });
+    setData(prev => { const n = cloneData(prev); n[selWeek-1].days[dayIdx].exercises[exIdx].logged[setIdx][field] = val; return n; });
   };
   const updateNotes = (dayIdx, val) => {
-    setData(prev => { const n = JSON.parse(JSON.stringify(prev)); n[selWeek-1].days[dayIdx].notes = val; return n; });
+    setData(prev => { const n = cloneData(prev); n[selWeek-1].days[dayIdx].notes = val; return n; });
   };
   const markAllDone = (dayIdx) => {
     setData(prev => {
-      const n = JSON.parse(JSON.stringify(prev));
+      const n = cloneData(prev);
       const d = n[selWeek-1].days[dayIdx];
       if (d.exercises) d.exercises.forEach(ex => ex.done = true);
       d.done = true;
