@@ -297,7 +297,7 @@ export default function Tracker() {
                       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 14px", background: ex.done ? "#DCFCE7" : "#F9FAFB", borderBottom:"1px solid #E5E7EB"}}>
                         <div style={{flex:1}}>
                           <div style={{display:"flex", alignItems:"center", gap:8, flexWrap:"wrap"}}>
-                            <span style={{fontWeight:700, fontSize:15}}>{ei+1}. {ex.name}</span>
+                            <span style={{fontWeight:700, fontSize:15}}>{ei+1}. {exInfo.name}</span>
                             <span style={{fontSize:11, padding:"2px 8px", borderRadius:4,
                               background: exInfo.type==="compound"?"#DBEAFE":exInfo.type==="isolation"?"#FEF3C7":"#E0E7FF",
                               color: exInfo.type==="compound"?"#1E40AF":exInfo.type==="isolation"?"#92400E":"#3730A3",
