@@ -134,7 +134,19 @@ const loadData = () => {
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     // Rehydrate date strings back into Date objects
-    parsed.forEach(w => w.days.forEach(d => { d.date = new Date(d.date); }));
+    parsed.forEach(w => w.days.forEach(d => {
+      d.date = new Date(d.date);
+      // Re-sync exercises with current WORKOUTS constant
+      if (d.workoutType && WORKOUTS[d.workoutType] && d.exercises) {
+        const current = WORKOUTS[d.workoutType].exercises;
+        d.exercises = current.map((ex, i) => {
+          const saved = d.exercises[i];
+          return saved && saved.name === ex.name ? saved : {
+            name: ex.name, logged: Array.from({length: ex.sets}, () => ({weight:"", reps:""})), done: false,
+          };
+        });
+      }
+    }));
     return parsed;
   } catch { return null; }
 };
@@ -265,6 +277,7 @@ export default function Tracker() {
               <div style={{display:"grid", gap:12}}>
                 {d.exercises.map((ex, ei) => {
                   const exInfo = wInfo.exercises[ei];
+                  if (!exInfo) return null;
                   const isOpen = expandedEx === ei;
                   const isPlaying = activeVideo === exInfo.videoId;
                   return (
