@@ -2,17 +2,9 @@ import { useState, useEffect } from "react";
 
 const WORKOUTS = {
   A: {
-    name: "Chest, Triceps + Legs",
+    name: "Push \u2014 Chest / Shoulders / Triceps",
     color: "#DC2626", bg: "#FEF2F2", border: "#FECACA",
     exercises: [
-      { name: "Dumbbell Sumo Squat", sets: 3, reps: "10", type: "compound", videoId: "9ZuXKqRbT9k",
-        howTo: "Stand with feet wide apart (about 1.5x shoulder width), toes pointed out at 45\u00b0. Hold ONE dumbbell vertically with both hands, letting it hang between your legs. Squat down by bending knees and hips until thighs are parallel to the floor. Push through your heels to stand back up.",
-        tips: "Keep your chest up and back straight \u2014 don't lean forward. Make sure your knees track over your toes (push them out). Squeeze your glutes at the top. This is easier to balance than a regular squat since the weight is low.",
-        muscles: "Inner Thighs, Glutes, Quads" },
-      { name: "Dumbbell Leg Curl", sets: 3, reps: "12", type: "isolation", videoId: "Orxowest56U",
-        howTo: "Lie face down on a flat bench with your knees just off the edge. Place a dumbbell between your feet (squeeze it firmly). Curl your legs up by bending at the knees, bringing the dumbbell toward your glutes. Lower slowly back down.",
-        tips: "Squeeze the dumbbell tightly between your feet so it doesn't slip. Control the lowering phase \u2014 don't just let it drop. Start light until you're comfortable holding the dumbbell with your feet.",
-        muscles: "Hamstrings" },
       { name: "Dumbbell Bench Press", sets: 3, reps: "10", type: "compound", videoId: "t1iaVBMItPo",
         howTo: "Lie flat on bench. Hold dumbbells at chest level, palms facing forward. Press straight up until arms are fully extended. Lower slowly (3 seconds) until elbows are level with the bench. Squeeze your chest at the top.",
         tips: "Keep feet flat on floor. Don't arch your lower back excessively. If wrists hurt, angle dumbbells slightly inward.",
@@ -21,48 +13,40 @@ const WORKOUTS = {
         howTo: "Set bench to 30\u00b0 angle. Sit back, dumbbells at upper chest level. Press up at a slight angle following the bench line. Lower slowly to upper chest.",
         tips: "Go lighter than flat press \u2014 this is harder. Don't flare elbows out too wide. Feel it in your upper chest.",
         muscles: "Upper Chest, Front Shoulders, Triceps" },
-      { name: "Dumbbell Fly", sets: 3, reps: "10", type: "isolation", videoId: "Nhvz9EzdJ4U",
-        howTo: "Lie flat on bench. Arms extended above chest with a slight bend in elbows (like hugging a tree). Open arms wide, lowering dumbbells to the sides until you feel a chest stretch. Squeeze chest to bring dumbbells back together.",
-        tips: "Go LIGHT \u2014 this is a stretch movement, not a power move. Keep slight bend in elbows throughout. Don't go too deep if shoulders hurt.",
-        muscles: "Chest (stretch focus)" },
-      { name: "Overhead Tricep Extension", sets: 3, reps: "10", type: "isolation", videoId: "9wxRhONFsRA",
-        howTo: "Sit on bench upright. Hold ONE dumbbell with both hands behind your head, elbows pointing up. Extend arms straight up. Lower slowly behind head until you feel a stretch in the back of your arms.",
-        tips: "Keep elbows close to your head \u2014 don't let them flare. Use one dumbbell held with both hands. Go lighter than you think.",
-        muscles: "Triceps" },
-      { name: "Seated Calf Raise", sets: 3, reps: "15", type: "isolation", videoId: "JbyjNymZOt0",
-        howTo: "Sit on the edge of a bench with feet flat on the floor. Place a dumbbell on each knee (rest them on your lower thigh). Push up onto your toes, raising your heels as high as possible. Hold for 1 second at the top. Lower slowly back down.",
-        tips: "Seated calf raises target the soleus (deeper calf muscle) which standing raises miss. Go slow \u2014 2 seconds up, 1 second hold, 3 seconds down. Use a folded towel on your knees if the dumbbells feel uncomfortable.",
-        muscles: "Calves (Soleus)" },
-    ],
-  },
-  B: {
-    name: "Back, Shoulders + Arms/Legs",
-    color: "#2563EB", bg: "#EFF6FF", border: "#BFDBFE",
-    exercises: [
-      { name: "Goblet Squat", sets: 3, reps: "10", type: "compound", videoId: "zBV3ceGyAxw",
-        howTo: "Hold ONE dumbbell vertically at your chest with both hands (like holding a goblet). Feet shoulder-width apart. Squat down until thighs are at least parallel to the floor. Push through heels to stand back up.",
-        tips: "Keep your chest up and elbows between your knees. If you can't go parallel, go as low as comfortable and build depth over time. This is the king of dumbbell leg exercises.",
-        muscles: "Quads, Glutes, Core" },
-      { name: "Dumbbell Leg Curl", sets: 3, reps: "12", type: "isolation", videoId: "Orxowest56U",
-        howTo: "Lie face down on a flat bench with your knees just off the edge. Place a dumbbell between your feet (squeeze it firmly). Curl your legs up by bending at the knees, bringing the dumbbell toward your glutes. Lower slowly back down.",
-        tips: "Squeeze the dumbbell tightly between your feet so it doesn't slip. Control the lowering phase \u2014 don't just let it drop. Start light until you're comfortable holding the dumbbell with your feet.",
-        muscles: "Hamstrings" },
-      { name: "One-Arm Dumbbell Row", sets: 3, reps: "10 each", type: "compound", videoId: "ze6J_KJtJJ8",
-        howTo: "Place one hand and same-side knee on the bench. Other foot on the floor. Hold dumbbell in free hand, arm hanging straight down. Pull dumbbell up to your hip, squeezing your shoulder blade back. Lower slowly. Do all reps on one side, then switch.",
-        tips: "Think about pulling with your elbow, not your hand. Your back should do the work, not your bicep. Keep your back flat like a table.",
-        muscles: "Upper Back, Lats, Biceps" },
       { name: "Seated Dumbbell Press", sets: 3, reps: "10", type: "compound", videoId: "TsduLWuhlFM",
         howTo: "Sit on bench set to upright (90\u00b0) for back support. Hold dumbbells at shoulder height, palms facing forward. Press straight up overhead until arms are extended. Lower slowly to ear level.",
         tips: "Don't lean back too much. Keep core tight. If your lower back hurts, use a lighter weight. These are harder than they look!",
         muscles: "Shoulders, Triceps" },
-      { name: "Incline Dumbbell Row", sets: 3, reps: "10", type: "compound", videoId: "Nx0TzjgsI-0",
-        howTo: "Set bench to 30\u00b0. Lie FACE DOWN on the bench, chest on the pad. Let dumbbells hang straight down. Row both dumbbells up, squeezing shoulder blades together at the top. Lower slowly.",
-        tips: "This is amazing for posture. Really focus on pinching shoulder blades together. Go moderate weight \u2014 form matters more here.",
-        muscles: "Upper Back, Rear Shoulders, Posture" },
+      { name: "Dumbbell Fly", sets: 3, reps: "10", type: "isolation", videoId: "Nhvz9EzdJ4U",
+        howTo: "Lie flat on bench. Arms extended above chest with a slight bend in elbows (like hugging a tree). Open arms wide, lowering dumbbells to the sides until you feel a chest stretch. Squeeze chest to bring dumbbells back together.",
+        tips: "Go LIGHT \u2014 this is a stretch movement, not a power move. Keep slight bend in elbows throughout. Don't go too deep if shoulders hurt.",
+        muscles: "Chest (stretch focus)" },
       { name: "Lateral Raise", sets: 3, reps: "12", type: "isolation", videoId: "PzsMitRdI_8",
         howTo: "Stand or sit. Hold light dumbbells at your sides, palms facing in. Raise arms out to the sides until shoulder height (like a T shape). Lower slowly. Slight bend in elbows is fine.",
         tips: "Go VERY LIGHT \u2014 these are humbling. Even 3-5kg is enough to start. Don't shrug your shoulders up. Lead with your elbows, not your hands.",
         muscles: "Side Shoulders" },
+      { name: "Overhead Tricep Extension", sets: 3, reps: "10", type: "isolation", videoId: "9wxRhONFsRA",
+        howTo: "Sit on bench upright. Hold ONE dumbbell with both hands behind your head, elbows pointing up. Extend arms straight up. Lower slowly behind head until you feel a stretch in the back of your arms.",
+        tips: "Keep elbows close to your head \u2014 don't let them flare. Use one dumbbell held with both hands. Go lighter than you think.",
+        muscles: "Triceps" },
+    ],
+  },
+  B: {
+    name: "Pull \u2014 Back / Biceps",
+    color: "#2563EB", bg: "#EFF6FF", border: "#BFDBFE",
+    exercises: [
+      { name: "One-Arm Dumbbell Row", sets: 3, reps: "10 each", type: "compound", videoId: "ze6J_KJtJJ8",
+        howTo: "Place one hand and same-side knee on the bench. Other foot on the floor. Hold dumbbell in free hand, arm hanging straight down. Pull dumbbell up to your hip, squeezing your shoulder blade back. Lower slowly. Do all reps on one side, then switch.",
+        tips: "Think about pulling with your elbow, not your hand. Your back should do the work, not your bicep. Keep your back flat like a table.",
+        muscles: "Upper Back, Lats, Biceps" },
+      { name: "Incline Dumbbell Row", sets: 3, reps: "10", type: "compound", videoId: "Nx0TzjgsI-0",
+        howTo: "Set bench to 30\u00b0. Lie FACE DOWN on the bench, chest on the pad. Let dumbbells hang straight down. Row both dumbbells up, squeezing shoulder blades together at the top. Lower slowly.",
+        tips: "This is amazing for posture. Really focus on pinching shoulder blades together. Go moderate weight \u2014 form matters more here.",
+        muscles: "Upper Back, Rear Shoulders, Posture" },
+      { name: "Rear Delt Fly", sets: 3, reps: "12", type: "isolation", videoId: "",
+        howTo: "Sit on the edge of a bench, feet flat, and lean forward until your chest is near your thighs. Hold light dumbbells with palms facing each other. With a slight bend in your elbows, raise your arms out to the sides until they reach shoulder height. Squeeze your shoulder blades together at the top, then lower slowly.",
+        tips: "Go VERY LIGHT \u2014 3-5lbs is plenty. Lead with your elbows, not your hands. Imagine pinching a pencil between your shoulder blades at the top. This fixes rounded shoulders from desk work.",
+        muscles: "Rear Shoulders, Upper Back, Posture" },
       { name: "Dumbbell Curl", sets: 3, reps: "10", type: "isolation", videoId: "XE_pHwbst04",
         howTo: "Stand or sit on bench. Hold dumbbells at sides, palms facing forward. Curl both dumbbells up toward shoulders. Lower slowly (3 seconds down). Keep elbows pinned to your sides.",
         tips: "Don't swing your body. If you have to swing, the weight is too heavy. Squeeze biceps hard at the top.",
@@ -71,9 +55,35 @@ const WORKOUTS = {
         howTo: "Stand or sit holding dumbbells at your sides with palms facing each other (neutral grip). Curl both dumbbells up toward your shoulders, keeping your palms facing inward the entire time. Lower slowly.",
         tips: "Keep your elbows pinned to your sides \u2014 don't let them drift forward. These hit your forearms and the outer head of the bicep that regular curls miss. You can usually go a bit heavier than regular curls.",
         muscles: "Biceps, Forearms, Brachialis" },
+    ],
+  },
+  C: {
+    name: "Legs \u2014 Quads / Hamstrings / Glutes / Calves",
+    color: "#7C3AED", bg: "#F5F3FF", border: "#DDD6FE",
+    exercises: [
+      { name: "Goblet Squat", sets: 3, reps: "10", type: "compound", videoId: "zBV3ceGyAxw",
+        howTo: "Hold ONE dumbbell vertically at your chest with both hands (like holding a goblet). Feet shoulder-width apart. Squat down until thighs are at least parallel to the floor. Push through heels to stand back up.",
+        tips: "Keep your chest up and elbows between your knees. If you can't go parallel, go as low as comfortable and build depth over time. This is the king of dumbbell leg exercises.",
+        muscles: "Quads, Glutes, Core" },
+      { name: "Dumbbell RDL (Romanian Deadlift)", sets: 3, reps: "10", type: "compound", videoId: "",
+        howTo: "Stand holding dumbbells in front of your thighs, feet hip-width apart. Keep a slight bend in your knees (don't squat). Push your hips BACK while lowering the dumbbells down the front of your legs. Go until you feel a stretch in your hamstrings (around shin level). Drive your hips forward to stand back up.",
+        tips: "Movement is hips BACK, not squat down. Keep dumbbells close to your legs (nearly touching). Back stays flat \u2014 no rounding. Your hamstrings should feel stretched, not your lower back. Start light until the hip hinge feels natural.",
+        muscles: "Hamstrings, Glutes, Lower Back" },
+      { name: "Bulgarian Split Squat", sets: 3, reps: "8 each", type: "compound", videoId: "",
+        howTo: "Stand 2-3 feet in front of a bench. Place the top of one foot behind you on the bench (laces down). Hold dumbbells at your sides. Lower your back knee straight down toward the floor until your front thigh is parallel. Push through the front heel to stand back up. Complete all reps, then switch legs.",
+        tips: "Most of the weight should be on your FRONT leg \u2014 the back leg just balances. Keep the front knee tracking over your toes. If you wobble, go lighter or use a wall for balance. Brutal but incredible for single-leg strength and glute growth.",
+        muscles: "Quads, Glutes, Hamstrings, Balance" },
+      { name: "Dumbbell Leg Curl", sets: 3, reps: "12", type: "isolation", videoId: "Orxowest56U",
+        howTo: "Lie face down on a flat bench with your knees just off the edge. Place a dumbbell between your feet (squeeze it firmly). Curl your legs up by bending at the knees, bringing the dumbbell toward your glutes. Lower slowly back down.",
+        tips: "Squeeze the dumbbell tightly between your feet so it doesn't slip. Control the lowering phase \u2014 don't just let it drop. Start light until you're comfortable holding the dumbbell with your feet.",
+        muscles: "Hamstrings" },
+      { name: "Dumbbell Hip Thrust", sets: 3, reps: "12", type: "isolation", videoId: "",
+        howTo: "Sit on the floor with your upper back resting against a bench. Place a dumbbell across your hips (use a folded towel for padding). Bend your knees with feet flat on the floor. Drive through your heels and push your hips up until your body forms a straight line from knees to shoulders. Squeeze glutes hard at the top. Lower slowly.",
+        tips: "Squeeze glutes HARD at the top and hold for 1 second. Keep chin tucked \u2014 don't over-extend your lower back. If no bench is available, do floor glute bridges instead (same movement, less range). This is the single best glute exercise.",
+        muscles: "Glutes, Hamstrings" },
       { name: "Seated Calf Raise", sets: 3, reps: "15", type: "isolation", videoId: "JbyjNymZOt0",
         howTo: "Sit on the edge of a bench with feet flat on the floor. Place a dumbbell on each knee (rest them on your lower thigh). Push up onto your toes, raising your heels as high as possible. Hold for 1 second at the top. Lower slowly back down.",
-        tips: "Seated calf raises target the soleus (deeper calf muscle) which standing raises miss. Go slow — 2 seconds up, 1 second hold, 3 seconds down. Use a folded towel on your knees if the dumbbells feel uncomfortable.",
+        tips: "Seated calf raises target the soleus (deeper calf muscle) which standing raises miss. Go slow \u2014 2 seconds up, 1 second hold, 3 seconds down. Use a folded towel on your knees if the dumbbells feel uncomfortable.",
         muscles: "Calves (Soleus)" },
     ],
   },
@@ -98,13 +108,13 @@ const buildCalendar = () => {
   let wk = 1;
   while (d <= end && wk <= 12) {
     const days = [];
-    const weekPattern = wk % 2 === 1 ? ["A","B","A"] : ["B","A","B"];
-    let pi = 0;
     for (let i = 0; i < 7 && d <= end; i++) {
       const dow = d.getDay();
       let type = "rest";
       let workoutType = null;
-      if (dow === 1 || dow === 3 || dow === 5) { type = "strength"; workoutType = weekPattern[pi]; pi++; }
+      if (dow === 1) { type = "strength"; workoutType = "A"; }
+      else if (dow === 3) { type = "strength"; workoutType = "B"; }
+      else if (dow === 5) { type = "strength"; workoutType = "C"; }
       days.push({
         date: new Date(d), dayName: DAYS[dow], type, workoutType,
         done: false, notes: "",
@@ -119,7 +129,7 @@ const buildCalendar = () => {
   return weeks;
 };
 
-const STORAGE_KEY = "harold_workout_data_v2";
+const STORAGE_KEY = "harold_workout_data_v3";
 const STORAGE_KEY_BW = "harold_workout_bodyweights";
 
 const saveData = (data) => {
@@ -271,7 +281,6 @@ export default function Tracker() {
                 <div style={{fontSize:12, color:"#6B7280", marginTop:2}}>
                   {d.exercises.filter(e => e.done).length} / {d.exercises.length} exercises done
                 </div>
-                <div style={{fontSize:11, color:"#9CA3AF", marginTop:2}}>Do upper body first, then legs/core</div>
               </div>
 
               <div style={{display:"grid", gap:12}}>
